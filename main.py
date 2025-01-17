@@ -2,12 +2,14 @@ import pygame
 from sys import exit
 import config
 import components
+import population
 
 
 print(config)
 
 pygame.init()
 clock = pygame.time.Clock()
+population = population.Population(100)
 
 def generate_pipes():
     config.pipes.append(components.Pipes(config.win_width))
@@ -40,6 +42,15 @@ def main():
             p.update()
             if p.off_screen:
                 config.pipes.remove(p)
+
+
+        #Spawn players
+        if not population.extinct():
+            population.update_live_players()
+        else:
+            config.pipes.clear()
+            population.natural_selection()
+            
 
 
         clock.tick(60)
