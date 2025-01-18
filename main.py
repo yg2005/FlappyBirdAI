@@ -3,6 +3,7 @@ from sys import exit
 import config
 import components
 import population
+import pygame.freetype
 
 
 print(config)
@@ -22,6 +23,7 @@ def quit_game():
 
 def main():
     pipes_spawn_time = 10
+    font = pygame.freetype.SysFont(None, 30)
 
     while True:
         quit_game()
@@ -52,6 +54,9 @@ def main():
             population.natural_selection()
             
 
+        # Render generation number
+        generation_text = f"Generation: {population.generation}"
+        font.render_to(config.window, (10, config.ground.ground_level + 180), generation_text, (255, 255, 255))
 
         clock.tick(60)
         pygame.display.flip()
