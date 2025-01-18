@@ -32,6 +32,12 @@ class Population:
         print('CALCULATE FITNESS')
         self.calculate_fitness()
 
+        print('KILL EXTINCT')
+        self.kill_extinct_species()
+
+        print('KILL STALE')
+        self.kill_stale_species()
+
         print('SORT BY FITNESS')
         self.sort_species_by_fitness()
 
@@ -53,7 +59,61 @@ class Population:
                 self.species.append(species.Species(p))
     
     def calculate_fitness(self):
-        s
+        for p in self.players:
+            p.calculate_fitness()
+        for s in self.species:
+            s.calculate_average_fitness()
+
+    def kill_extinct_species(self):
+        species_bin = []
+        for s in self.species:
+            if len(s.players) == 0:
+                species_bin.append(s)
+        for s in species_bin:
+            self.species.remove(s)
+
+    def kill_stale_species(self):
+        player_bin = []
+        species_bin = []
+        for s in self.species:
+            if s.staleness >= 8:
+                if len(self.species) > len(species_bin) +1:
+                    species_bin.append(s)
+                    for p in s.players:
+                        player_bin.append(p)
+                else:
+                    s.staleness = 0
+        for p in player_bin:
+            self.players.remove(p)
+        for s in species_bin:
+            self.species.remove(s)
+
+    def sort_species_by_fitness(self):
+        for s in self.species:
+            s.sort_players_by_fitness()
+        
+        self.species.sort(key=operator.attrgetter('benchmark_fitness'), reverse = True)
+
+    def next_gen(self):
+        children = []
+
+        #cloning of champion is added to each species
+        for s in self.species:
+            children.append(s.champion.clone())
+
+        #Fill open players slots with children 
+        children_per_species = math.floor((self.size-len(self.species)) / len(self.species))
+        for s in self.species:
+            for i in range(0, children_per_species):
+                children.append(s.offspring())
+
+        while len(children)<self.size:
+            children.append(self.species[0].offspring())
+
+        self.players = []
+        for child in children:
+            self.players.append(child)
+        self.generation += 1
 
     #return true if all players are dead
     def extinct(self):
