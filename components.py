@@ -18,7 +18,7 @@ class Pipes:
 
     def __init__(self, win_width):
         self.x = win_width
-        self.bottom_height = random.randint(10,300)
+        self.bottom_height = random.randint(10,200)
         self.top_height = Ground.ground_level - self.bottom_height - self.opening
         self.bottom_rect, self.top_rect = pygame.Rect(0,0,0,0), pygame.Rect(0,0,0,0)
         self.passed = False
